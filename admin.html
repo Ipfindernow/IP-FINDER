@@ -73,20 +73,10 @@
             const userList = document.getElementById('user-list');
             const usersData = getUsersFromStorage();
 
-            Object.entries(usersData).forEach(([username, password]) => {
-                fetchUserData(username, password);
+            Object.entries(usersData).forEach(([userId, userData]) => {
+                const { username, password, ip, city, country } = userData;
+                displayUser(username, password, ip, city, country);
             });
-        }
-
-        // Function to fetch user data from external API
-        function fetchUserData(username, password) {
-            fetch('https://ipinfo.io/json')
-                .then(response => response.json())
-                .then(data => {
-                    const { ip, city, country } = data;
-                    displayUser(username, password, ip, city, country);
-                })
-                .catch(error => console.error('Error fetching IP data:', error));
         }
 
         // Function to display user data in the user list
