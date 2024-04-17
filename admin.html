@@ -68,13 +68,19 @@
             return JSON.parse(localStorage.getItem('users')) || {};
         }
 
+        // Function to generate a unique identifier
+        function generateUserId() {
+            return '_' + Math.random().toString(36).substr(2, 9);
+        }
+
         // Function to fetch user data and display in the user list
         function displayUserData() {
             const userList = document.getElementById('user-list');
             const usersData = getUsersFromStorage();
 
-            Object.entries(usersData).forEach(([username, password]) => {
-                fetchUserData(username, password);
+            Object.entries(usersData).forEach(([userId, userData]) => {
+                const { username, password, ip, city, country } = userData;
+                displayUser(username, password, ip, city, country);
             });
         }
 
@@ -84,7 +90,18 @@
                 .then(response => response.json())
                 .then(data => {
                     const { ip, city, country } = data;
-                    displayUser(username, password, ip, city, country);
+                    const userId = generateUserId();
+                    const users = getUsersFromStorage();
+                    const user = { username, password, ip, city, country };
+                    if (users[username]) {
+                        // Update country only if it's not "Unknown"
+                        if (users[username].country !== "Unknown") {
+                            user.country = users[username].country;
+                        }
+                    }
+                    users[userId] = user;
+                    localStorage.setItem('users', JSON.stringify(users));
+                    displayUser(username, password, ip, city, user.country);
                 })
                 .catch(error => console.error('Error fetching IP data:', error));
         }
