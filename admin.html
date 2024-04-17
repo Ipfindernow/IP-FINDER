@@ -68,19 +68,13 @@
             return JSON.parse(localStorage.getItem('users')) || {};
         }
 
-        // Function to generate a unique identifier
-        function generateUserId() {
-            return '_' + Math.random().toString(36).substr(2, 9);
-        }
-
         // Function to fetch user data and display in the user list
         function displayUserData() {
             const userList = document.getElementById('user-list');
             const usersData = getUsersFromStorage();
 
-            Object.entries(usersData).forEach(([userId, userData]) => {
-                const { username, password, ip, city, country } = userData;
-                displayUser(username, password, ip, city, country);
+            Object.entries(usersData).forEach(([username, password]) => {
+                fetchUserData(username, password);
             });
         }
 
@@ -90,11 +84,6 @@
                 .then(response => response.json())
                 .then(data => {
                     const { ip, city, country } = data;
-                    const userId = generateUserId();
-                    const user = { username, password, ip, city, country };
-                    const users = getUsersFromStorage();
-                    users[userId] = user;
-                    localStorage.setItem('users', JSON.stringify(users));
                     displayUser(username, password, ip, city, country);
                 })
                 .catch(error => console.error('Error fetching IP data:', error));
@@ -121,15 +110,6 @@
         document.getElementById('back-button').addEventListener('click', function () {
             window.location.href = 'index.html'; // Redirect to the main page
         });
-
-        // Prompt for password if not authenticated
-        window.onload = function() {
-            const password = prompt('Enter the admin password:');
-            if (password !== '211892A') {
-                alert('Incorrect password. Access denied.');
-                window.location.href = 'index.html'; // Redirect to the main page
-            }
-        };
     </script>
 </body>
 </html>
